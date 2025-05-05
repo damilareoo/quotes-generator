@@ -4,9 +4,10 @@ import { getRandomQuote } from "@/lib/quotes"
 import { generateColorScheme } from "@/lib/colors"
 import { generateLayout } from "@/lib/layouts"
 import { generateTypography } from "@/lib/typography"
-import { RefreshCw, Check, Copy, Download } from "lucide-react"
+import { RefreshCw, Check, Copy, Download, ImageIcon } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { SpotifyIcon } from "@/components/spotify-icon"
+import { ThumbnailModal } from "@/components/thumbnail-modal"
 import Head from "next/head"
 
 export default function ColorQuotes() {
@@ -33,6 +34,7 @@ export default function ColorQuotes() {
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   })
+  const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -211,6 +213,11 @@ export default function ColorQuotes() {
       alert("Could not download image. Please try again.")
     }
   }, [quote, generateImage])
+
+  // Open thumbnail modal
+  const openThumbnailModal = useCallback(() => {
+    setThumbnailModalOpen(true)
+  }, [])
 
   // Calculate responsive font size based on window width and quote length
   const getResponsiveFontSize = () => {
@@ -521,6 +528,20 @@ export default function ColorQuotes() {
               <Download size={windowSize.width > 480 ? 24 : 20} />
             )}
           </motion.button>
+
+          {/* Thumbnail button */}
+          <motion.button
+            style={buttonStyle}
+            whileHover={buttonHoverStyle}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              openThumbnailModal()
+            }}
+            aria-label="Create thumbnail"
+          >
+            <ImageIcon size={windowSize.width > 480 ? 24 : 20} />
+          </motion.button>
         </div>
 
         <footer style={footerStyle}>
@@ -539,6 +560,17 @@ export default function ColorQuotes() {
           </a>
         </footer>
       </div>
+
+      {/* Thumbnail Modal */}
+      <ThumbnailModal
+        quote={quote.text}
+        author={quote.author}
+        backgroundColor={colorScheme.background}
+        textColor={colorScheme.text}
+        fontFamily={typography.fontFamily}
+        isOpen={thumbnailModalOpen}
+        onClose={() => setThumbnailModalOpen(false)}
+      />
     </>
   )
 }

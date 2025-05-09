@@ -12,19 +12,48 @@ export const size = {
 }
 export const contentType = "image/png"
 
-// Revalidate every hour
-export const revalidate = 3600
+// Revalidate every minute to ensure fresh quotes
+export const revalidate = 60
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Get a random quote
-    const quote = await getRandomQuote()
+    const { searchParams } = new URL(request.url)
+
+    // Get viewport width if provided, default to desktop
+    const width = searchParams.get("width") ? Number.parseInt(searchParams.get("width") as string) : 1200
+
+    // Determine if it's a mobile device
+    const isMobile = width < 640
+
+    // Adjust height based on width to maintain aspect ratio
+    const height = Math.floor(width * (630 / 1200))
+
+    // Get a random quote or use the one from params if provided
+    let quote = await getRandomQuote()
+    const quoteText = searchParams.get("quote")
+    const quoteAuthor = searchParams.get("author")
+
+    if (quoteText && quoteAuthor) {
+      quote = { text: quoteText, author: quoteAuthor }
+    }
 
     // Generate a color scheme - using a mint color scheme to match the provided image
     const colorScheme = {
       background: "#e0ffff", // Light mint/cyan background
       text: "#2d4f4f", // Dark teal text color
     }
+
+    // Adjust font sizes based on viewport width
+    const titleSize = isMobile ? 24 : 32
+    const quoteMarkSize = isMobile ? 120 : 200
+    const quoteSize = isMobile ? (quote.text.length > 100 ? 20 : 24) : quote.text.length > 100 ? 32 : 40
+    const authorSize = isMobile ? 20 : 28
+    const footerSize = isMobile ? 16 : 20
+
+    // Truncate quote if too long
+    const maxQuoteLength = isMobile ? 120 : 180
+    const displayQuote =
+      quote.text.length > maxQuoteLength ? quote.text.substring(0, maxQuoteLength) + "..." : quote.text
 
     return new ImageResponse(
       <div
@@ -38,7 +67,7 @@ export async function GET() {
           backgroundColor: colorScheme.background,
           color: colorScheme.text,
           position: "relative",
-          padding: "40px",
+          padding: isMobile ? "20px" : "40px",
           fontFamily: "sans-serif",
         }}
       >
@@ -46,8 +75,8 @@ export async function GET() {
         <div
           style={{
             position: "absolute",
-            top: "40px",
-            fontSize: "32px",
+            top: isMobile ? "20px" : "40px",
+            fontSize: `${titleSize}px`,
             fontWeight: "bold",
           }}
         >
@@ -57,12 +86,12 @@ export async function GET() {
         {/* Large quotation mark */}
         <div
           style={{
-            fontSize: "200px",
+            fontSize: `${quoteMarkSize}px`,
             fontWeight: "bold",
             lineHeight: 1,
             fontFamily: "serif",
             opacity: 0.9,
-            marginBottom: "20px",
+            marginBottom: isMobile ? "10px" : "20px",
           }}
         >
           "
@@ -71,22 +100,22 @@ export async function GET() {
         {/* Quote text */}
         <div
           style={{
-            fontSize: quote.text.length > 100 ? "32px" : "40px",
+            fontSize: `${quoteSize}px`,
             fontWeight: "medium",
             textAlign: "center",
             maxWidth: "80%",
             lineHeight: 1.4,
           }}
         >
-          {quote.text.length > 180 ? quote.text.substring(0, 180) + "..." : quote.text}
+          {displayQuote}
         </div>
 
         {/* Author */}
         <div
           style={{
-            fontSize: "28px",
+            fontSize: `${authorSize}px`,
             fontStyle: "italic",
-            marginTop: "24px",
+            marginTop: isMobile ? "16px" : "24px",
             opacity: 0.9,
           }}
         >
@@ -97,8 +126,8 @@ export async function GET() {
         <div
           style={{
             position: "absolute",
-            bottom: "40px",
-            fontSize: "20px",
+            bottom: isMobile ? "20px" : "40px",
+            fontSize: `${footerSize}px`,
             opacity: 0.7,
           }}
         >
@@ -106,7 +135,8 @@ export async function GET() {
         </div>
       </div>,
       {
-        ...size,
+        width: width,
+        height: height,
         // Using system fonts
         fonts: [],
       },

@@ -111,7 +111,7 @@ export function ThumbnailModal({
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
-        padding: isSmallScreen ? "16px" : "20px",
+        padding: isSmallScreen ? "10px" : "20px",
       }}
       onClick={onClose}
     >
@@ -119,7 +119,7 @@ export function ThumbnailModal({
         style={{
           backgroundColor: "white",
           borderRadius: "12px",
-          padding: isSmallScreen ? "20px" : "24px",
+          padding: isSmallScreen ? "16px" : "24px",
           maxWidth: "95%",
           maxHeight: "95%",
           overflow: "auto",
@@ -134,13 +134,13 @@ export function ThumbnailModal({
         <button
           style={{
             position: "absolute",
-            top: isSmallScreen ? "10px" : "12px",
-            right: isSmallScreen ? "10px" : "12px",
+            top: isSmallScreen ? "8px" : "12px",
+            right: isSmallScreen ? "8px" : "12px",
             background: "none",
             border: "none",
             cursor: "pointer",
             color: "#666",
-            padding: isSmallScreen ? "6px" : "8px",
+            padding: isSmallScreen ? "4px" : "8px",
             // Ensure minimum touch target size
             minWidth: "44px",
             minHeight: "44px",

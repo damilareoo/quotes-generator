@@ -10,10 +10,10 @@ export const metadata: Metadata = {
     description: "Discover inspiring quotes with beautiful typography and colors",
     images: [
       {
-        url: "/api/og",
+        url: "/images/site-image.png",
         width: 1200,
         height: 630,
-        alt: "Inspiration Canvas - Daily Quotes",
+        alt: "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
       },
     ],
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Inspiration Canvas",
     description: "Discover inspiring quotes with beautiful typography and colors",
-    images: ["/api/og"],
+    images: ["/images/site-image.png"],
     creator: "@damilare_oo",
   },
   icons: {

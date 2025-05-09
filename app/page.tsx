@@ -8,7 +8,6 @@ import { RefreshCw, Check, Copy, Download, ImageIcon } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { SpotifyIcon } from "@/components/spotify-icon"
 import { ThumbnailModal } from "@/components/thumbnail-modal"
-import { DynamicOGMeta } from "@/components/dynamic-og-meta"
 
 export default function ColorQuotes() {
   const [quote, setQuote] = useState({ text: "", author: "" })
@@ -35,18 +34,8 @@ export default function ColorQuotes() {
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   })
   const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false)
-  const [shareModalOpen, setShareModalOpen] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
-
-  // Check if Web Share API is available
-  const isWebShareAvailable = useCallback(() => {
-    return (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function" &&
-      typeof navigator.canShare === "function"
-    )
-  }, [])
 
   // Update window size on resize
   useEffect(() => {
@@ -86,12 +75,7 @@ export default function ColorQuotes() {
     setLayout(newLayout)
     setTypography(newTypography)
 
-    // Try to revalidate the OG image, but don't worry if it fails
-    try {
-      await fetch("/api/revalidate-og", { method: "POST" })
-    } catch (error) {
-      console.error("Failed to revalidate OG image:", error)
-    }
+    // No need to revalidate OG image anymore since we're using a static image
 
     setTimeout(() => {
       setIsRefreshing(false)
@@ -191,50 +175,6 @@ export default function ColorQuotes() {
       alert("Could not copy to clipboard. Please try again.")
     }
   }, [quote])
-
-  // Share quote using Web Share API or fallback to copy
-  const shareQuote = useCallback(async () => {
-    setShareStatus("copying")
-
-    try {
-      // Check if Web Share API is available and can share text
-      const shareData = {
-        title: "Inspiration Canvas",
-        text: `"${quote.text}" — ${quote.author}\n\nShared from Inspiration Canvas`,
-        url: window.location.href,
-      }
-
-      if (isWebShareAvailable() && navigator.canShare(shareData)) {
-        try {
-          await navigator.share(shareData)
-          setShareStatus("copied")
-        } catch (error) {
-          console.error("Web Share API error:", error)
-          // Fallback to clipboard if sharing fails
-          await copyToClipboard()
-        }
-      } else {
-        // Fallback to clipboard if Web Share API is not available
-        await copyToClipboard()
-      }
-
-      // Reset status after 2 seconds
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(() => {
-        setShareStatus("idle")
-      }, 2000)
-    } catch (error) {
-      console.error("Failed to share:", error)
-      setShareStatus("idle")
-
-      // Try clipboard as a last resort
-      try {
-        await copyToClipboard()
-      } catch (clipboardError) {
-        alert("Could not share. Please try again.")
-      }
-    }
-  }, [quote, copyToClipboard, isWebShareAvailable])
 
   // Download image
   const downloadImage = useCallback(() => {
@@ -346,9 +286,9 @@ export default function ColorQuotes() {
     maxWidth: windowSize.width > 768 ? "800px" : "100%",
     width: "100%",
     // Adjust padding for mobile
-    padding: useCompactLayout ? "1.25rem" : windowSize.width > 480 ? "2rem" : "1.5rem",
+    padding: useCompactLayout ? "1rem" : windowSize.width > 480 ? "2rem" : "1.5rem",
     // Adjust bottom margin to ensure buttons are visible
-    marginBottom: useCompactLayout ? "110px" : "90px",
+    marginBottom: useCompactLayout ? "100px" : "80px",
     border: "none",
     boxShadow: "none",
     background: "none",
@@ -398,19 +338,19 @@ export default function ColorQuotes() {
   }
 
   const footerStyle = {
-    padding: useCompactLayout ? "0.75rem" : "1rem",
+    padding: useCompactLayout ? "0.5rem" : "1rem",
     width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
     // Adjust font size for better readability on mobile
-    fontSize: useCompactLayout ? "0.8rem" : windowSize.width > 480 ? "1rem" : "0.85rem",
+    fontSize: useCompactLayout ? "0.75rem" : windowSize.width > 480 ? "1rem" : "0.8rem",
     fontFamily: "Geist, sans-serif",
     transition: "all 0.8s ease-in-out",
     flexWrap: "wrap" as const,
-    // Increase minimum height on mobile for better touch targets
-    minHeight: useCompactLayout ? "50px" : "60px",
+    // Reduce minimum height on mobile
+    minHeight: useCompactLayout ? "40px" : "60px",
     position: "relative" as const,
     zIndex: 10,
     border: "none",
@@ -432,13 +372,13 @@ export default function ColorQuotes() {
   // Button container style for grouping buttons
   const buttonContainerStyle = {
     position: "fixed" as const,
-    // Adjust position to ensure visibility and proper spacing
-    bottom: useCompactLayout ? "65px" : "80px",
+    // Adjust position to ensure visibility
+    bottom: useCompactLayout ? "50px" : "80px",
     left: "50%",
     transform: "translateX(-50%)",
     display: "flex",
     // Reduce gap on smaller screens
-    gap: useCompactLayout ? "16px" : "20px",
+    gap: useCompactLayout ? "12px" : "16px",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 100,
@@ -450,8 +390,8 @@ export default function ColorQuotes() {
     border: `2px solid ${colorScheme.text}40`,
     borderRadius: "50%",
     // Adjust button size for better touch targets on mobile
-    width: useCompactLayout ? "48px" : windowSize.width > 480 ? "60px" : "52px",
-    height: useCompactLayout ? "48px" : windowSize.width > 480 ? "60px" : "52px",
+    width: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
+    height: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -460,8 +400,8 @@ export default function ColorQuotes() {
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     outline: "none",
     // Ensure minimum touch target size (44px is recommended)
-    minWidth: "48px",
-    minHeight: "48px",
+    minWidth: "44px",
+    minHeight: "44px",
   }
 
   const buttonHoverStyle = {
@@ -479,9 +419,6 @@ export default function ColorQuotes() {
 
   return (
     <>
-      {/* Dynamic OG Meta Tags */}
-      <DynamicOGMeta quote={quote.text} author={quote.author} />
-
       <div style={containerStyle}>
         <div style={contentStyle}>
           <AnimatePresence mode="wait">
@@ -504,7 +441,7 @@ export default function ColorQuotes() {
 
         {/* Button container for all action buttons */}
         <div style={buttonContainerStyle}>
-          {/* Copy button (renamed from Share since we're using it as a fallback) */}
+          {/* Copy button */}
           <motion.button
             style={buttonStyle}
             whileHover={buttonHoverStyle}
@@ -540,9 +477,9 @@ export default function ColorQuotes() {
                 </svg>
               </motion.div>
             ) : shareStatus === "copied" ? (
-              <Check size={useCompactLayout ? 20 : windowSize.width > 480 ? 24 : 22} />
+              <Check size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             ) : (
-              <Copy size={useCompactLayout ? 20 : windowSize.width > 480 ? 24 : 22} />
+              <Copy size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             )}
           </motion.button>
 

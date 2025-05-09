@@ -13,7 +13,6 @@ body {
   font-size: 16px;
 }
 
-/* Ensure proper spacing for all elements */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -38,28 +37,11 @@ body {
   html {
     font-size: 13px;
   }
-
-  /* Improve touch targets on mobile */
-  button,
-  a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Add more space between elements */
-  .space-y-mobile > * + * {
-    margin-top: 1rem;
-  }
 }
 
 @media (max-width: 360px) {
   html {
     font-size: 12px;
-  }
-
-  /* Further adjustments for very small screens */
-  body {
-    padding: 0.5rem;
   }
 }
 
@@ -89,20 +71,6 @@ canvas {
   margin: 0;
   padding: 0;
   border: none;
-}
-
-/* Improve touch targets */
-button {
-  touch-action: manipulation;
-  cursor: pointer;
-}
-
-/* Ensure proper spacing for interactive elements */
-button,
-a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Ensure buttons have proper touch targets */

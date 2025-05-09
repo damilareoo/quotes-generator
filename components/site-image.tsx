@@ -1,49 +1,60 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useRef, useEffect } from "react"
 
 interface SiteImageProps {
-  quote: string
-  author: string
+  backgroundColor?: string
+  quoteMarkColor?: string
 }
 
-export function SiteImage({ quote, author }: SiteImageProps) {
-  const [imageUrl, setImageUrl] = useState<string>("")
-  const [width, setWidth] = useState<number>(1200)
+export function SiteImage({ backgroundColor = "#e0ffff", quoteMarkColor = "#2d4f4f" }: SiteImageProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    // Only run in browser
-    if (typeof window === "undefined") return
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-    // Update width based on viewport
-    setWidth(window.innerWidth)
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
 
-    // Create the image URL
-    const encodedQuote = encodeURIComponent(quote)
-    const encodedAuthor = encodeURIComponent(author)
-    const timestamp = new Date().getTime()
+    // Make canvas responsive to device pixel ratio
+    const dpr = window.devicePixelRatio || 1
+    const rect = canvas.getBoundingClientRect()
 
-    setImageUrl(`/api/og?quote=${encodedQuote}&author=${encodedAuthor}&width=${window.innerWidth}&t=${timestamp}`)
-  }, [quote, author])
+    // Set canvas size with device pixel ratio for sharpness
+    canvas.width = rect.width * dpr
+    canvas.height = rect.height * dpr
+    ctx.scale(dpr, dpr)
 
-  if (!imageUrl) return null
+    // Set display size
+    canvas.style.width = `${rect.width}px`
+    canvas.style.height = `${rect.height}px`
+
+    // Fill background
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Draw quotation mark
+    ctx.fillStyle = quoteMarkColor
+    ctx.font = "bold 120px serif"
+    ctx.textAlign = "center"
+    ctx.textBaseline = "middle"
+    ctx.fillText('"', rect.width / 2, rect.height / 2)
+
+    // Return a cleanup function
+    return () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+  }, [backgroundColor, quoteMarkColor])
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h3 style={{ marginBottom: "10px" }}>Current Site Image Preview</h3>
-      <img
-        src={imageUrl || "/placeholder.svg"}
-        alt={`"${quote}" — ${author}`}
-        style={{
-          maxWidth: "100%",
-          height: "auto",
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-        }}
-      />
-      <p style={{ marginTop: "10px", fontSize: "0.8rem", opacity: 0.7 }}>
-        This is how your quote will appear when shared (width: {width}px)
-      </p>
-    </div>
+    <canvas
+      ref={canvasRef}
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "block",
+      }}
+    />
   )
 }

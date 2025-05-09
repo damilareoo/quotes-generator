@@ -49,6 +49,7 @@ export function ThumbnailGenerator({
 
     // Draw quote
     const maxWidth = width * 0.8
+    // Adjust font size based on width to ensure readability
     const fontSize = Math.max(12, Math.min(16, Math.floor(width / 25)))
     ctx.font = `${fontSize}px ${fontFamily.split(",")[0]}`
     ctx.textAlign = "center"
@@ -60,7 +61,8 @@ export function ThumbnailGenerator({
       let line = ""
       let testLine = ""
       let lineCount = 0
-      const maxLines = 4 // Limit to 4 lines for thumbnail
+      // Adjust max lines based on thumbnail size
+      const maxLines = Math.floor(height / (lineHeight * 1.5))
       let truncated = false
 
       for (let n = 0; n < words.length; n++) {

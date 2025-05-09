@@ -226,25 +226,34 @@ export default function ColorQuotes() {
     // Adjust font size based on screen width
     let responsiveSize = baseFontSize
 
+    // More aggressive scaling for mobile devices
     if (windowSize.width < 768) {
-      responsiveSize = baseFontSize * 0.8
+      responsiveSize = baseFontSize * 0.75
     }
     if (windowSize.width < 480) {
-      responsiveSize = baseFontSize * 0.6
+      responsiveSize = baseFontSize * 0.55
+    }
+    if (windowSize.width < 360) {
+      responsiveSize = baseFontSize * 0.45
     }
 
     // Further reduce for very long quotes
     if (quoteLength > 200) {
-      responsiveSize *= 0.7
+      responsiveSize *= 0.65
     } else if (quoteLength > 100) {
-      responsiveSize *= 0.85
+      responsiveSize *= 0.8
     }
 
-    return `${responsiveSize}rem`
+    // Ensure minimum readable font size (16px equivalent)
+    const minSize = windowSize.width < 360 ? 0.9 : 1
+    return `${Math.max(responsiveSize, minSize)}rem`
   }
 
+  // Determine if we should use a more compact layout for small screens
+  const useCompactLayout = windowSize.width < 480
+
   const containerStyle = {
-    backgroundColor: colorScheme.background, // Single background color
+    backgroundColor: colorScheme.background,
     color: colorScheme.text,
     height: "100vh",
     width: "100vw",
@@ -267,10 +276,11 @@ export default function ColorQuotes() {
     padding: 0,
     position: "relative" as const,
     overflow: "hidden",
-    maxHeight: "calc(100vh - 60px)",
+    // Adjust max height to ensure content fits on mobile
+    maxHeight: useCompactLayout ? "calc(100vh - 120px)" : "calc(100vh - 60px)",
     margin: 0,
     border: "none",
-    background: "none", // No background
+    background: "none",
   }
 
   const quoteContainerStyle = {
@@ -280,11 +290,19 @@ export default function ColorQuotes() {
     justifyContent: layout.position === "center" ? "center" : layout.position === "top" ? "flex-start" : "flex-end",
     maxWidth: windowSize.width > 768 ? "800px" : "100%",
     width: "100%",
-    padding: windowSize.width > 480 ? "2rem" : "1rem",
-    marginBottom: "80px",
+    // Adjust padding for mobile
+    padding: useCompactLayout ? "1rem" : windowSize.width > 480 ? "2rem" : "1.5rem",
+    // Adjust bottom margin to ensure buttons are visible
+    marginBottom: useCompactLayout ? "100px" : "80px",
     border: "none",
     boxShadow: "none",
-    background: "none", // No background
+    background: "none",
+    // Add max-height to ensure content doesn't overflow
+    maxHeight: useCompactLayout ? "calc(100vh - 160px)" : "calc(100vh - 140px)",
+    overflowY: "auto" as const,
+    // Hide scrollbar but allow scrolling
+    scrollbarWidth: "none" as const,
+    msOverflowStyle: "none" as const,
   }
 
   const quoteStyle = {
@@ -295,53 +313,62 @@ export default function ColorQuotes() {
     lineHeight: typography.lineHeight,
     textAlign: layout.alignment as "center" | "left" | "right",
     transition: "all 0.8s ease-in-out",
-    maxHeight: "60vh",
+    // Ensure text doesn't overflow
+    maxHeight: useCompactLayout ? "calc(70vh - 160px)" : "60vh",
     overflow: "hidden",
     textOverflow: "ellipsis" as const,
     wordWrap: "break-word" as const,
     hyphens: "auto" as const,
     border: "none",
     boxShadow: "none",
-    background: "none", // No background
+    background: "none",
+    // Improve readability with minimum line height
+    minHeight: "1em",
   }
 
   const authorStyle = {
     fontFamily: typography.fontFamily,
-    fontSize: `calc(${getResponsiveFontSize()} * 0.6)`,
+    // Ensure author text is readable but proportional to quote text
+    fontSize: `calc(${getResponsiveFontSize()} * 0.7)`,
     fontWeight: "normal",
     opacity: 0.8,
-    marginTop: "1rem",
+    marginTop: useCompactLayout ? "0.5rem" : "1rem",
     textAlign: layout.alignment as "center" | "left" | "right",
     wordWrap: "break-word" as const,
     border: "none",
     boxShadow: "none",
-    background: "none", // No background
+    background: "none",
+    // Ensure minimum readable size
+    minFontSize: useCompactLayout ? "0.8rem" : "1rem",
   }
 
   const footerStyle = {
-    padding: "1rem",
+    padding: useCompactLayout ? "0.5rem" : "1rem",
     width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
-    fontSize: windowSize.width > 480 ? "1rem" : "0.8rem",
+    // Adjust font size for better readability on mobile
+    fontSize: useCompactLayout ? "0.75rem" : windowSize.width > 480 ? "1rem" : "0.8rem",
     fontFamily: "Geist, sans-serif",
     transition: "all 0.8s ease-in-out",
     flexWrap: "wrap" as const,
-    minHeight: "60px",
+    // Reduce minimum height on mobile
+    minHeight: useCompactLayout ? "40px" : "60px",
     position: "relative" as const,
     zIndex: 10,
     border: "none",
     boxShadow: "none",
-    background: "none", // No background
+    background: "none",
     margin: 0,
   }
 
   const linkStyle = {
     color: colorScheme.text,
     backgroundColor: `${colorScheme.text}20`,
-    padding: "0.2rem 0.4rem",
+    // Increase padding for better touch targets
+    padding: useCompactLayout ? "0.2rem 0.3rem" : "0.2rem 0.4rem",
     borderRadius: "4px",
     textDecoration: "none",
     transition: "all 0.3s ease",
@@ -350,11 +377,13 @@ export default function ColorQuotes() {
   // Button container style for grouping buttons
   const buttonContainerStyle = {
     position: "fixed" as const,
-    bottom: "80px",
+    // Adjust position to ensure visibility
+    bottom: useCompactLayout ? "50px" : "80px",
     left: "50%",
     transform: "translateX(-50%)",
     display: "flex",
-    gap: "16px",
+    // Reduce gap on smaller screens
+    gap: useCompactLayout ? "12px" : "16px",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 100,
@@ -365,8 +394,9 @@ export default function ColorQuotes() {
     color: colorScheme.text,
     border: `2px solid ${colorScheme.text}40`,
     borderRadius: "50%",
-    width: windowSize.width > 480 ? "60px" : "50px",
-    height: windowSize.width > 480 ? "60px" : "50px",
+    // Adjust button size for better touch targets on mobile
+    width: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
+    height: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -374,6 +404,9 @@ export default function ColorQuotes() {
     transition: "all 0.3s ease",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
     outline: "none",
+    // Ensure minimum touch target size (44px is recommended)
+    minWidth: "44px",
+    minHeight: "44px",
   }
 
   const buttonHoverStyle = {
@@ -453,9 +486,9 @@ export default function ColorQuotes() {
                 </svg>
               </motion.div>
             ) : shareStatus === "copied" ? (
-              <Check size={windowSize.width > 480 ? 24 : 20} />
+              <Check size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             ) : (
-              <Copy size={windowSize.width > 480 ? 24 : 20} />
+              <Copy size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             )}
           </motion.button>
 
@@ -471,7 +504,7 @@ export default function ColorQuotes() {
             aria-label="Get fresh quote"
           >
             <RefreshCw
-              size={windowSize.width > 480 ? 24 : 20}
+              size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20}
               style={{
                 transition: "transform 0.5s ease",
                 transform: isRefreshing ? "rotate(180deg)" : "rotate(0deg)",
@@ -515,9 +548,9 @@ export default function ColorQuotes() {
                 </svg>
               </motion.div>
             ) : shareStatus === "downloaded" ? (
-              <Check size={windowSize.width > 480 ? 24 : 20} />
+              <Check size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             ) : (
-              <Download size={windowSize.width > 480 ? 24 : 20} />
+              <Download size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
             )}
           </motion.button>
 
@@ -532,7 +565,7 @@ export default function ColorQuotes() {
             }}
             aria-label="Create thumbnail"
           >
-            <ImageIcon size={windowSize.width > 480 ? 24 : 20} />
+            <ImageIcon size={useCompactLayout ? 18 : windowSize.width > 480 ? 24 : 20} />
           </motion.button>
         </div>
 
@@ -548,7 +581,7 @@ export default function ColorQuotes() {
             aria-label="Damilare's Spotify playlist"
             style={{ display: "flex", alignItems: "center", marginLeft: "4px" }}
           >
-            <SpotifyIcon color={colorScheme.text} size={windowSize.width > 480 ? 20 : 16} />
+            <SpotifyIcon color={colorScheme.text} size={useCompactLayout ? 16 : windowSize.width > 480 ? 20 : 18} />
           </a>
         </footer>
       </div>

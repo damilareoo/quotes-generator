@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { ThumbnailGenerator } from "./thumbnail-generator"
 import { Download, Copy, X } from "lucide-react"
 
@@ -25,7 +25,26 @@ export function ThumbnailModal({
 }: ThumbnailModalProps) {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied">("idle")
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  })
   const timeoutRef = useRef<NodeJS.Timeout>()
+
+  // Update window size on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+
+    window.addEventListener("resize", handleResize)
+    handleResize() // Initial call
+
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   if (!isOpen) return null
 
@@ -72,6 +91,13 @@ export function ThumbnailModal({
     }
   }
 
+  // Determine if we're on a small screen
+  const isSmallScreen = windowSize.width < 480
+
+  // Calculate appropriate thumbnail size for the screen
+  const thumbnailWidth = isSmallScreen ? Math.min(300, windowSize.width - 60) : 400
+  const thumbnailHeight = Math.floor(thumbnailWidth * 0.75) // Maintain 4:3 aspect ratio
+
   return (
     <div
       style={{
@@ -85,7 +111,7 @@ export function ThumbnailModal({
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
-        padding: "20px",
+        padding: isSmallScreen ? "10px" : "20px",
       }}
       onClick={onClose}
     >
@@ -93,9 +119,9 @@ export function ThumbnailModal({
         style={{
           backgroundColor: "white",
           borderRadius: "12px",
-          padding: "24px",
-          maxWidth: "90%",
-          maxHeight: "90%",
+          padding: isSmallScreen ? "16px" : "24px",
+          maxWidth: "95%",
+          maxHeight: "95%",
           overflow: "auto",
           boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
           display: "flex",
@@ -108,25 +134,33 @@ export function ThumbnailModal({
         <button
           style={{
             position: "absolute",
-            top: "12px",
-            right: "12px",
+            top: isSmallScreen ? "8px" : "12px",
+            right: isSmallScreen ? "8px" : "12px",
             background: "none",
             border: "none",
             cursor: "pointer",
             color: "#666",
+            padding: isSmallScreen ? "4px" : "8px",
+            // Ensure minimum touch target size
+            minWidth: "44px",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
           onClick={onClose}
           aria-label="Close"
         >
-          <X size={24} />
+          <X size={isSmallScreen ? 20 : 24} />
         </button>
 
         <h2
           style={{
-            margin: "0 0 20px 0",
+            margin: "0 0 16px 0",
             color: "#333",
-            fontSize: "1.5rem",
+            fontSize: isSmallScreen ? "1.2rem" : "1.5rem",
             fontWeight: "bold",
+            paddingRight: isSmallScreen ? "40px" : "0", // Make room for close button
           }}
         >
           Quote Thumbnail
@@ -134,7 +168,7 @@ export function ThumbnailModal({
 
         <div
           style={{
-            marginBottom: "20px",
+            marginBottom: isSmallScreen ? "16px" : "20px",
             display: "flex",
             justifyContent: "center",
           }}
@@ -146,16 +180,18 @@ export function ThumbnailModal({
             textColor={textColor}
             fontFamily={fontFamily}
             onGenerated={handleThumbnailGenerated}
-            width={400}
-            height={300}
+            width={thumbnailWidth}
+            height={thumbnailHeight}
           />
         </div>
 
         <div
           style={{
             display: "flex",
-            gap: "12px",
-            marginTop: "10px",
+            gap: isSmallScreen ? "8px" : "12px",
+            marginTop: isSmallScreen ? "8px" : "10px",
+            width: "100%",
+            justifyContent: "center",
           }}
         >
           <button
@@ -163,7 +199,7 @@ export function ThumbnailModal({
               display: "flex",
               alignItems: "center",
               gap: "8px",
-              padding: "10px 16px",
+              padding: isSmallScreen ? "8px 12px" : "10px 16px",
               backgroundColor: "#f3f4f6",
               border: "1px solid #d1d5db",
               borderRadius: "6px",
@@ -171,6 +207,9 @@ export function ThumbnailModal({
               color: "#374151",
               fontWeight: "medium",
               transition: "all 0.2s",
+              fontSize: isSmallScreen ? "0.9rem" : "1rem",
+              // Ensure minimum touch target size
+              minHeight: "44px",
             }}
             onClick={copyThumbnail}
           >
@@ -180,7 +219,7 @@ export function ThumbnailModal({
               </>
             ) : (
               <>
-                <Copy size={18} />
+                <Copy size={isSmallScreen ? 16 : 18} />
                 <span>Copy</span>
               </>
             )}
@@ -191,7 +230,7 @@ export function ThumbnailModal({
               display: "flex",
               alignItems: "center",
               gap: "8px",
-              padding: "10px 16px",
+              padding: isSmallScreen ? "8px 12px" : "10px 16px",
               backgroundColor: "#4f46e5",
               border: "none",
               borderRadius: "6px",
@@ -199,10 +238,13 @@ export function ThumbnailModal({
               color: "white",
               fontWeight: "medium",
               transition: "all 0.2s",
+              fontSize: isSmallScreen ? "0.9rem" : "1rem",
+              // Ensure minimum touch target size
+              minHeight: "44px",
             }}
             onClick={downloadThumbnail}
           >
-            <Download size={18} />
+            <Download size={isSmallScreen ? 16 : 18} />
             <span>Download</span>
           </button>
         </div>

@@ -20,10 +20,12 @@ export function DynamicOGMeta({ quote, author }: DynamicOGMetaProps) {
     // Get the current viewport width
     const width = typeof window !== "undefined" ? window.innerWidth : 1200
 
-    return `/api/og?quote=${encodedQuote}&author=${encodedAuthor}&width=${width}&t=${timestamp}`
+    // Create the full URL with the origin to ensure it's absolute
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : ""
+    return `${baseUrl}/api/og?quote=${encodedQuote}&author=${encodedAuthor}&width=${width}&t=${timestamp}`
   }
 
-  // Update meta tags when quote changes
+  // Update the useEffect to better handle social sharing
   useEffect(() => {
     // Only run in browser
     if (typeof window === "undefined") return
@@ -33,11 +35,16 @@ export function DynamicOGMeta({ quote, author }: DynamicOGMetaProps) {
 
     // Find existing meta tags or create new ones
     const updateMetaTag = (property: string, content: string) => {
-      let meta = document.querySelector(`meta[property="${property}"]`)
+      let meta =
+        document.querySelector(`meta[property="${property}"]`) || document.querySelector(`meta[name="${property}"]`)
 
       if (!meta) {
         meta = document.createElement("meta")
-        meta.setAttribute("property", property)
+        if (property.startsWith("og:")) {
+          meta.setAttribute("property", property)
+        } else {
+          meta.setAttribute("name", property)
+        }
         document.head.appendChild(meta)
       }
 
@@ -48,12 +55,20 @@ export function DynamicOGMeta({ quote, author }: DynamicOGMetaProps) {
     updateMetaTag("og:title", `"${quote}" — ${author}`)
     updateMetaTag("og:description", "Inspiration Canvas - Beautiful quotes with dynamic styling")
     updateMetaTag("og:image", ogImageUrl)
+    updateMetaTag("og:image:width", "1200")
+    updateMetaTag("og:image:height", "630")
+    updateMetaTag("og:url", window.location.href)
+    updateMetaTag("og:type", "website")
 
     // Update Twitter meta tags
     updateMetaTag("twitter:card", "summary_large_image")
     updateMetaTag("twitter:title", `"${quote}" — ${author}`)
     updateMetaTag("twitter:description", "Inspiration Canvas - Beautiful quotes with dynamic styling")
     updateMetaTag("twitter:image", ogImageUrl)
+    updateMetaTag("twitter:creator", "@damilare_oo")
+
+    // Update standard meta tags
+    updateMetaTag("description", `"${quote}" — ${author} | Inspiration Canvas`)
 
     // Trigger a revalidation of the OG image
     fetch("/api/revalidate-og", { method: "POST" }).catch((err) => console.error("Failed to revalidate OG image:", err))

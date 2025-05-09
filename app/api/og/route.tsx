@@ -13,8 +13,9 @@ export const size = {
 export const contentType = "image/png"
 
 // Revalidate every minute to ensure fresh quotes
-export const revalidate = 60
+export const revalidate = 60 // Revalidate every minute
 
+// Update the GET function to better handle different breakpoints
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -24,6 +25,7 @@ export async function GET(request: Request) {
 
     // Determine if it's a mobile device
     const isMobile = width < 640
+    const isTablet = width >= 640 && width < 1024
 
     // Adjust height based on width to maintain aspect ratio
     const height = Math.floor(width * (630 / 1200))
@@ -44,16 +46,31 @@ export async function GET(request: Request) {
     }
 
     // Adjust font sizes based on viewport width
-    const titleSize = isMobile ? 24 : 32
-    const quoteMarkSize = isMobile ? 120 : 200
-    const quoteSize = isMobile ? (quote.text.length > 100 ? 20 : 24) : quote.text.length > 100 ? 32 : 40
-    const authorSize = isMobile ? 20 : 28
-    const footerSize = isMobile ? 16 : 20
+    const titleSize = isMobile ? 24 : isTablet ? 28 : 32
+    const quoteMarkSize = isMobile ? 120 : isTablet ? 160 : 200
+    const quoteSize = isMobile
+      ? quote.text.length > 100
+        ? 18
+        : 22
+      : isTablet
+        ? quote.text.length > 100
+          ? 24
+          : 32
+        : quote.text.length > 100
+          ? 32
+          : 40
+    const authorSize = isMobile ? 18 : isTablet ? 24 : 28
+    const footerSize = isMobile ? 14 : isTablet ? 18 : 20
 
     // Truncate quote if too long
-    const maxQuoteLength = isMobile ? 120 : 180
+    const maxQuoteLength = isMobile ? 100 : isTablet ? 150 : 180
     const displayQuote =
       quote.text.length > maxQuoteLength ? quote.text.substring(0, maxQuoteLength) + "..." : quote.text
+
+    // Adjust padding based on device size
+    const padding = isMobile ? "16px" : isTablet ? "30px" : "40px"
+    const topPosition = isMobile ? "16px" : isTablet ? "30px" : "40px"
+    const bottomPosition = isMobile ? "16px" : isTablet ? "30px" : "40px"
 
     return new ImageResponse(
       <div
@@ -67,7 +84,7 @@ export async function GET(request: Request) {
           backgroundColor: colorScheme.background,
           color: colorScheme.text,
           position: "relative",
-          padding: isMobile ? "20px" : "40px",
+          padding,
           fontFamily: "sans-serif",
         }}
       >
@@ -75,7 +92,7 @@ export async function GET(request: Request) {
         <div
           style={{
             position: "absolute",
-            top: isMobile ? "20px" : "40px",
+            top: topPosition,
             fontSize: `${titleSize}px`,
             fontWeight: "bold",
           }}
@@ -91,7 +108,7 @@ export async function GET(request: Request) {
             lineHeight: 1,
             fontFamily: "serif",
             opacity: 0.9,
-            marginBottom: isMobile ? "10px" : "20px",
+            marginBottom: isMobile ? "10px" : isTablet ? "16px" : "20px",
           }}
         >
           "
@@ -115,7 +132,7 @@ export async function GET(request: Request) {
           style={{
             fontSize: `${authorSize}px`,
             fontStyle: "italic",
-            marginTop: isMobile ? "16px" : "24px",
+            marginTop: isMobile ? "12px" : isTablet ? "20px" : "24px",
             opacity: 0.9,
           }}
         >
@@ -126,7 +143,7 @@ export async function GET(request: Request) {
         <div
           style={{
             position: "absolute",
-            bottom: isMobile ? "20px" : "40px",
+            bottom: bottomPosition,
             fontSize: `${footerSize}px`,
             opacity: 0.7,
           }}

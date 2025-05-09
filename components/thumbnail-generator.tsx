@@ -137,6 +137,7 @@ export function ThumbnailGenerator({
         maxWidth: "100%",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
+        margin: "10px 0",
       }}
     />
   )

@@ -262,6 +262,7 @@ export default function ColorQuotes() {
     border: "none",
   }
 
+  // Update the contentStyle to ensure proper spacing
   const contentStyle = {
     flex: 1,
     display: "flex",
@@ -271,13 +272,14 @@ export default function ColorQuotes() {
     padding: 0,
     position: "relative" as const,
     overflow: "hidden",
-    // Adjust max height to ensure content fits on mobile
-    maxHeight: useCompactLayout ? "calc(100vh - 120px)" : "calc(100vh - 60px)",
+    // Adjust max height to ensure content fits on mobile with proper spacing
+    maxHeight: useCompactLayout ? "calc(100vh - 130px)" : "calc(100vh - 60px)",
     margin: 0,
     border: "none",
     background: "none",
   }
 
+  // Update the quoteContainerStyle to ensure proper spacing from buttons
   const quoteContainerStyle = {
     display: "flex",
     flexDirection: "column" as const,
@@ -288,12 +290,12 @@ export default function ColorQuotes() {
     // Adjust padding for mobile
     padding: useCompactLayout ? "1rem" : windowSize.width > 480 ? "2rem" : "1.5rem",
     // Adjust bottom margin to ensure buttons are visible
-    marginBottom: useCompactLayout ? "100px" : "80px",
+    marginBottom: useCompactLayout ? "130px" : "100px",
     border: "none",
     boxShadow: "none",
     background: "none",
     // Add max-height to ensure content doesn't overflow
-    maxHeight: useCompactLayout ? "calc(100vh - 160px)" : "calc(100vh - 140px)",
+    maxHeight: useCompactLayout ? "calc(100vh - 180px)" : "calc(100vh - 140px)",
     overflowY: "auto" as const,
     // Hide scrollbar but allow scrolling
     scrollbarWidth: "none" as const,
@@ -337,8 +339,9 @@ export default function ColorQuotes() {
     minFontSize: useCompactLayout ? "0.8rem" : "1rem",
   }
 
+  // Update the footerStyle to ensure it stays at the bottom with proper spacing
   const footerStyle = {
-    padding: useCompactLayout ? "0.5rem" : "1rem",
+    padding: useCompactLayout ? "0.75rem 0.5rem" : "1rem",
     width: "100%",
     display: "flex",
     justifyContent: "center",
@@ -349,13 +352,16 @@ export default function ColorQuotes() {
     fontFamily: "Geist, sans-serif",
     transition: "all 0.8s ease-in-out",
     flexWrap: "wrap" as const,
-    // Reduce minimum height on mobile
-    minHeight: useCompactLayout ? "40px" : "60px",
-    position: "relative" as const,
+    // Ensure consistent height on mobile
+    minHeight: useCompactLayout ? "50px" : "60px",
+    position: "fixed" as const,
+    bottom: 0,
     zIndex: 10,
     border: "none",
     boxShadow: "none",
-    background: "none",
+    // Add a semi-transparent background that matches the main background
+    background: `${colorScheme.background}F0`,
+    backdropFilter: "blur(5px)",
     margin: 0,
   }
 
@@ -369,11 +375,11 @@ export default function ColorQuotes() {
     transition: "all 0.3s ease",
   }
 
-  // Button container style for grouping buttons
+  // Update the buttonContainerStyle to increase the distance from the footer
   const buttonContainerStyle = {
     position: "fixed" as const,
-    // Adjust position to ensure visibility
-    bottom: useCompactLayout ? "50px" : "80px",
+    // Adjust position to ensure visibility and better spacing from footer
+    bottom: useCompactLayout ? "70px" : "80px",
     left: "50%",
     transform: "translateX(-50%)",
     display: "flex",
@@ -384,14 +390,15 @@ export default function ColorQuotes() {
     zIndex: 100,
   }
 
+  // Update the buttonStyle to ensure proper sizing on mobile
   const buttonStyle = {
     backgroundColor: `${colorScheme.text}20`,
     color: colorScheme.text,
     border: `2px solid ${colorScheme.text}40`,
     borderRadius: "50%",
     // Adjust button size for better touch targets on mobile
-    width: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
-    height: useCompactLayout ? "45px" : windowSize.width > 480 ? "60px" : "50px",
+    width: useCompactLayout ? "48px" : windowSize.width > 480 ? "60px" : "50px",
+    height: useCompactLayout ? "48px" : windowSize.width > 480 ? "60px" : "50px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

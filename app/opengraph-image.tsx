@@ -61,6 +61,16 @@ export default function Image() {
       >
         — Leonardo da Vinci
       </div>
+      <div
+        style={{
+          position: "absolute",
+          bottom: "40px",
+          fontSize: "20px",
+          opacity: 0.7,
+        }}
+      >
+        Built with love and music by Damilare
+      </div>
     </div>,
     {
       ...size,

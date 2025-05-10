@@ -569,7 +569,7 @@ export default function ColorQuotes() {
 
         <footer style={footerStyle}>
           <span>Built with love and music by </span>
-          <a href="https://x.com/damilare_oo" target="_blank" rel="noopener noreferrer" style={linkStyle}>
+          <a href="https://damilareoo.xyz" target="_blank" rel="noopener noreferrer" style={linkStyle}>
             Damilare
           </a>
           <a

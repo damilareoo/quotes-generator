@@ -1,30 +1,49 @@
-# Interactive Quote App
+# Quotes Generator
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+Generate beautiful **inspirational quote cards** — with image export and Spotify-style visuals.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/damilares-projects-fc682e5f/quote-app)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/lS0C0BqN7TU)
+🔗 **[Try it live](https://quote-app-three-puce.vercel.app)**
 
-## Overview
+---
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+## What It Does
 
-## Deployment
+Browse curated inspirational quotes, generate shareable quote images with beautiful layouts and typography, and download or share them.
 
-Your project is live at:
+## Features
 
-**[https://vercel.com/damilares-projects-fc682e5f/quote-app](https://vercel.com/damilares-projects-fc682e5f/quote-app)**
+- 💬 Curated quote library across multiple categories
+- 🖼️ Generate downloadable quote image cards
+- 🎨 Multiple layout styles and color schemes
+- 🎵 Spotify-inspired visual aesthetic
+- 📤 Export as PNG thumbnail
 
-## Build your app
+## Tech Stack
 
-Continue building your app on:
+| Tool | Purpose |
+|------|---------|
+| Next.js | React framework |
+| TypeScript | Type safety |
+| Canvas API | Image generation |
+| Tailwind CSS | Styling |
+| Vercel | Deployment |
 
-**[https://v0.dev/chat/projects/lS0C0BqN7TU](https://v0.dev/chat/projects/lS0C0BqN7TU)**
+## Getting Started
 
-## How It Works
+```bash
+# 1. Clone
+git clone https://github.com/damilareoo/quotes-generator.git
+cd quotes-generator
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+# 2. Install dependencies
+pnpm install
+
+# 3. Run locally
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+Built by [Damilare Osofisan](https://www.damilareoo.xyz)

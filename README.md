@@ -1,28 +1,22 @@
 # Quotes Generator
 
-Generate beautiful **inspirational quote cards** — with image export and Spotify-style visuals.
+Generate inspirational quote cards with image export. Browse curated quotes across multiple categories and download them as styled images.
 
-🔗 **[Try it live](https://quote-app-three-puce.vercel.app)**
+[Try it live](https://quote-app-three-puce.vercel.app)
 
 ---
 
-## What It Does
-
-Browse curated inspirational quotes, generate shareable quote images with beautiful layouts and typography, and download or share them.
-
 ## Features
 
-- 💬 Curated quote library across multiple categories
-- 🖼️ Generate downloadable quote image cards
-- 🎨 Multiple layout styles and color schemes
-- 🎵 Spotify-inspired visual aesthetic
-- 📤 Export as PNG thumbnail
+- Browse quotes by category
+- Customizable layout styles and color schemes
+- Export quotes as downloadable PNG image cards
 
 ## Tech Stack
 
 | Tool | Purpose |
 |------|---------|
-| Next.js | React framework |
+| Next.js | App framework & routing |
 | TypeScript | Type safety |
 | Canvas API | Image generation |
 | Tailwind CSS | Styling |
@@ -38,11 +32,11 @@ cd quotes-generator
 # 2. Install dependencies
 pnpm install
 
-# 3. Run locally
+# 3. Run the dev server
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
